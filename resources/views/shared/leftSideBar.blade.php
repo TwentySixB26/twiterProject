@@ -7,6 +7,11 @@
                 </a>
             </li>
             <li class="nav-item">
+                <a class="{{ Route::is('feed') ? 'text-white bg-primary rounded' : '' }} nav-link " href="{{ route('feed') }}">
+                    <span>feed</span>
+                </a>
+            </li>
+            <li class="nav-item">
                 <a class="{{ Request::is('terms') ? 'text-white bg-primary rounded' : '' }} nav-link " href="terms">
                     <span>Terms</span>
                 </a>
@@ -14,6 +19,7 @@
         </ul>
     </div>
     <div class="card-footer text-center py-2">
-        <a class="btn btn-link btn-sm" href="{{ route('profile') }}">View Profile </a>
+        <a class="btn btn-link btn-sm" href="/lang/en">en </a>
+        <a class="btn btn-link btn-sm" href="/lang/id">id </a>
     </div>
 </div>

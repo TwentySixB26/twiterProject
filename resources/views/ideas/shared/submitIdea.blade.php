@@ -19,5 +19,5 @@
 
 
 @guest()
-    <h4> Anda belum melakukan Login</h4>
+    <h4> {{  __('ideas.login_to_share')}}</h4>
 @endguest

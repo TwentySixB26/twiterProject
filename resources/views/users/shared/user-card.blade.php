@@ -12,9 +12,9 @@
             </div>
             <div>
                 @auth()
-                    @if (Auth::id() === $user->id)
+                    @can('update', $user)
                         <a href="/users/{{ $user->id }}/edit"> Edit </a>
-                    @endif
+                    @endcan
                 @endauth
             </div>
         </div>

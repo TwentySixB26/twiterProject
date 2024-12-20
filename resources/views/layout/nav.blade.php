@@ -17,6 +17,12 @@
                         </li>
                     @endguest
                     @auth()
+                        @if (auth()->user()->is_admin)
+                            <li class="nav-item">
+                                <a class="nav-link {{ Route::is('admin') ? 'active' : '' }}" href="/admin">Admin</a>
+                                {{-- Auth::user()->name  digunakan untuk mengambil nama yang sedang login --}}
+                            </li>
+                        @endif
                         <li class="nav-item">
                             <a class="nav-link {{ Route::is('profile') ? 'active' : '' }}" href="/profile">{{ Auth::user()->name }}</a>
                             {{-- Auth::user()->name  digunakan untuk mengambil nama yang sedang login --}}

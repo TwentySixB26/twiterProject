@@ -3,20 +3,20 @@
 namespace App\Http\Controllers;
 
 use App\Models\Idea;
+use App\Models\User;
 use Illuminate\Http\Request;
+use App\Http\Requests\CreateIdeaRequest;
+use App\Http\Requests\UpdateIdeaRequest;
 
 class IdeaController extends Controller
 {
     //method yang bertugas menangani agar ketika ada data baru yang dikirim
-    public function store() {
+    public function store(CreateIdeaRequest $request) {
         //melakukan validasi data
-        $validated = request()->validate([
-            'content' => 'required|max:240'
-        ]) ;
+        $validated = $request->validated();
 
         //user_id akan diambil ketika anda sudah login dan akan diisi sesuai dengan yg sedang login
         $validated["user_id"] = auth()->id();
-
 
 
         //memasukan data ke db
@@ -45,20 +45,22 @@ class IdeaController extends Controller
     {
 
         //jika user yang login tidak sesuai dengan postingan yg berleasi dengan idea maka tidak bisa melakukan destroy,edit,update
-        if (auth()->id() !== $idea->user_id) {
-            abort(404) ;
-        }
+        // if (auth()->id() !== $idea->user_id) {
+        //     abort(404) ;
+        // }
 
-        // Idea::destroy($idea->id) ;
+        $this->authorize('delete', $idea);
         $idea->delete() ;
         return redirect('/')->with('success', 'Post succesfuly deletedddd') ;
     }
 
 
     public function show(Idea $idea) {
+        // $topUsers = User::withCount('ideas')->orderBy('ideas_count','DESC')->limit(5)->get() ;
 
         return view('ideas/show',[
             'idea' => $idea,
+            // 'top_users' => $topUsers ,
         ]) ;
     }
 
@@ -66,11 +68,11 @@ class IdeaController extends Controller
     public function edit(Idea $idea) {
 
         //jika user yang login tidak sesuai dengan postingan yg berleasi dengan idea maka tidak bisa melakukan destroy,edit,update
-        if (auth()->id() !== $idea->user_id) {
-            abort(404) ;
-        }
+        // if (auth()->id() !== $idea->user_id) {
+        //     abort(404) ;
+        // }
 
-        // $editing digunakan untuk digunakan ideaCard.blade.php jika bernilai true maka akan ditampilkan dan jika false maka form tersebut tidak akan ditampilkan
+        $this->authorize('update', $idea);        // $editing digunakan untuk digunakan ideaCard.blade.php jika bernilai true maka akan ditampilkan dan jika false maka form tersebut tidak akan ditampilkan
         $editing = true ;
         return view('ideas/show',[
             'idea' => $idea,
@@ -78,7 +80,7 @@ class IdeaController extends Controller
         ]) ;
     }
 
-    public function update(Idea $idea) {
+    public function update( UpdateIdeaRequest $request,Idea $idea) {
 
         //jika user yang login tidak sesuai dengan postingan yg berleasi dengan idea maka tidak bisa melakukan destroy,edit,update
         if (auth()->id() !== $idea->user_id) {
@@ -86,15 +88,13 @@ class IdeaController extends Controller
         }
 
         //melakukan validasi data
-        request()->validate([
-            'content' => 'required|max:240'
-        ]) ;
+        $validated = $request->validated() ;
 
         // data yang telah lolos validasi maka disimpan divariabel
-        $idea->content = request()->get('content') ;
+        // $idea->content = request()->get('content') ;
 
         //melakukan save atau mengirim data ke database
-        $idea->save() ;
+        $idea->update($validated) ;
 
         return redirect('/idea' .'/' . $idea->id)->with('success', 'Post succesfuly updated') ;
     }
